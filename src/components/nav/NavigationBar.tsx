@@ -15,7 +15,7 @@ export function NavigationBar() {
 
   const scheduleClose = useCallback(() => {
     cancelClose();
-    closeTimer.current = setTimeout(() => setOpenLabel(null), 120);
+    closeTimer.current = setTimeout(() => setOpenLabel(null), 140);
   }, [cancelClose]);
 
   const open = useCallback(
@@ -41,7 +41,10 @@ export function NavigationBar() {
   return (
     <div
       ref={containerRef}
+      data-mega-root
       className="relative hidden border-b border-neutral-200 bg-white lg:block"
+      onMouseLeave={scheduleClose}
+      onMouseEnter={cancelClose}
       onBlur={(e) => {
         if (!containerRef.current?.contains(e.relatedTarget as Node)) setOpenLabel(null);
       }}
@@ -84,28 +87,6 @@ export function NavigationBar() {
           onMouseLeave={scheduleClose}
         />
       ) : null}
-
-      {/* closes the menu when the pointer leaves both the bar and the dropdown */}
-      <div className="absolute inset-0 -z-10" onMouseEnter={scheduleClose} aria-hidden />
-      <div className="pointer-events-none absolute inset-0" aria-hidden />
-      <span
-        className="absolute inset-x-0 top-0 h-full"
-        style={{ pointerEvents: "none" }}
-        aria-hidden
-      />
-      <MouseLeaveGuard onLeave={scheduleClose} />
     </div>
   );
-}
-
-function MouseLeaveGuard({ onLeave }: { onLeave: () => void }) {
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target?.closest?.("[data-mega-root]")) onLeave();
-    };
-    document.addEventListener("mouseover", handler);
-    return () => document.removeEventListener("mouseover", handler);
-  }, [onLeave]);
-  return null;
 }
