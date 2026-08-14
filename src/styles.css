@@ -152,3 +152,29 @@
     color: var(--color-foreground);
   }
 }
+
+:root {
+  --brand: oklch(0.55 0.13 148);
+  --brand-dark: oklch(0.42 0.1 150);
+  --brand-deep: oklch(0.31 0.06 152);
+  --brand-foreground: oklch(0.99 0.01 140);
+  --saffron: oklch(0.72 0.17 60);
+  --saffron-foreground: oklch(0.2 0.03 60);
+  --heading: oklch(0.28 0.02 150);
+}
+
+@keyframes mega-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility mega-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand) transparent;
+}
