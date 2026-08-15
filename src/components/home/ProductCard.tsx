@@ -1,7 +1,9 @@
 import { Heart, Star } from "lucide-react";
-import type { Product } from "@/data/home";
+import type { Product } from "@/data/catalog";
+import { useCart } from "@/lib/cart";
 
 export function ProductCard({ product }: { product: Product }) {
+  const { add } = useCart();
   const off = Math.round(((product.mrp - product.price) / product.mrp) * 100);
   return (
     <article className="relative flex flex-col overflow-hidden rounded-md border border-neutral-200 bg-white transition-shadow hover:shadow-lg">
@@ -33,9 +35,7 @@ export function ProductCard({ product }: { product: Product }) {
           <span className="text-base font-bold text-heading">₹{product.price}</span>
           <span className="text-sm text-muted-foreground line-through">₹{product.mrp}</span>
         </div>
-        <p className="text-xs font-medium text-brand-dark">
-          Save ₹ {product.mrp - product.price}
-        </p>
+        <p className="text-xs font-medium text-brand-dark">Save ₹ {product.mrp - product.price}</p>
         <div className="mt-2 flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Size</span>
           <span className="flex-1 rounded border border-neutral-300 px-2 py-1 text-xs">
@@ -44,6 +44,7 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
         <button
           type="button"
+          onClick={() => add(product)}
           className="mt-3 w-full rounded-md bg-brand py-2 text-sm font-semibold text-brand-foreground transition-opacity hover:opacity-90"
         >
           Add to Cart
