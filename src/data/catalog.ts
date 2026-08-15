@@ -10,7 +10,7 @@ export type Product = {
   reviews: number;
   size: string;
   emoji: string;
-  badge?: string;
+  badge?: string | undefined;
   /** category / subcategory slugs this product belongs to */
   tags: string[];
 };
@@ -124,7 +124,7 @@ export const products: Product[] = [
 export const brands = Array.from(new Set(products.map((x) => x.brand))).sort();
 
 /** Category registry built from the navigation tree, so every menu link resolves. */
-export type CategoryDef = { slug: string; name: string; parent?: string; description: string };
+export type CategoryDef = { slug: string; name: string; parent?: string | undefined; description: string };
 
 const registry = new Map<string, CategoryDef>();
 
