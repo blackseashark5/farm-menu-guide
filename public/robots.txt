@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://farm-menu-guide.lovable.app/sitemap.xml
