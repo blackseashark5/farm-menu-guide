@@ -1,12 +1,37 @@
+import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
 
 const columns = [
   {
     title: "Shop",
-    links: ["Seeds", "Crop Protection", "Crop Nutrition", "Implements", "Animal Husbandry"],
+    links: [
+      { label: "Seeds", slug: "seeds" },
+      { label: "Crop Protection", slug: "crop-protection" },
+      { label: "Crop Nutrition", slug: "crop-nutrition" },
+      { label: "Implements", slug: "implements" },
+      { label: "Animal Husbandry", slug: "animal-husbandry" },
+    ],
   },
-  { title: "Company", links: ["About Us", "Careers", "Blogs", "Vedika", "Bulk Orders"] },
-  { title: "Support", links: ["Track Order", "Returns & Refunds", "Shipping Policy", "FAQ", "Contact Us"] },
+  {
+    title: "Company",
+    links: [
+      { label: "Organic Range", slug: "organic" },
+      { label: "Tapas Store", slug: "tapas" },
+      { label: "Blogs", slug: "blogs" },
+      { label: "Vedika", slug: "vedika" },
+      { label: "Bulk Orders", slug: "offers" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "Sprayers", slug: "sprayers" },
+      { label: "Irrigation", slug: "irrigation" },
+      { label: "Safety Kits", slug: "safety-kit" },
+      { label: "Urban Garden", slug: "urban-garden" },
+      { label: "Services", slug: "services" },
+    ],
+  },
 ];
 
 export function Footer() {
@@ -52,10 +77,14 @@ export function Footer() {
             <div className="mt-3 mb-4 h-px w-10 bg-saffron" />
             <ul className="space-y-2 text-sm text-brand-foreground/80">
               {col.links.map((link) => (
-                <li key={link}>
-                  <a href="#all" className="hover:text-brand-foreground hover:underline">
-                    {link}
-                  </a>
+                <li key={link.label}>
+                  <Link
+                    to="/category/$slug"
+                    params={{ slug: link.slug }}
+                    className="hover:text-brand-foreground hover:underline"
+                  >
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -66,7 +95,12 @@ export function Footer() {
       <div className="border-t border-white/15">
         <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-6 py-5 text-xs text-brand-foreground/75 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Kisaan Seva. Built by Ranveer — ranveer4us@gmail.com</p>
-          <p>Privacy Policy · Terms of Use · Sitemap</p>
+          <p>
+            Privacy Policy · Terms of Use ·{" "}
+            <a href="/sitemap.xml" className="hover:underline">
+              Sitemap
+            </a>
+          </p>
         </div>
       </div>
     </footer>
