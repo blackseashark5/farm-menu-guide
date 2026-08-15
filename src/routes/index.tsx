@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import heroBanner from "@/assets/hero-banner.jpg";
 import { Header } from "@/components/nav/Header";
 import { Footer } from "@/components/home/Footer";
@@ -15,6 +15,7 @@ import {
   trending,
 } from "@/data/home";
 
+const SITE = "https://farm-menu-guide.lovable.app";
 const title = "Kisaan Seva — Seeds, Crop Protection & Farm Equipment Online";
 const description =
   "Shop genuine seeds, crop protection, crop nutrition, sprayers and animal husbandry products from trusted agri brands on Kisaan Seva.";
@@ -27,7 +28,27 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: `${SITE}/` },
       { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: `${SITE}/` }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "OnlineStore",
+          name: "Kisaan Seva",
+          url: `${SITE}/`,
+          description,
+          email: "ranveer4us@gmail.com",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: `${SITE}/search?q={search_term_string}`,
+            "query-input": "required name=search_term_string",
+          },
+        }),
+      },
     ],
   }),
   component: Index,
@@ -68,12 +89,13 @@ function Index() {
                 <p className="mt-2 text-lg font-bold text-brand-dark sm:text-2xl">
                   Spray Neemodi today!
                 </p>
-                <a
-                  href="#best-selling"
+                <Link
+                  to="/category/$slug"
+                  params={{ slug: "crop-protection" }}
                   className="mt-4 inline-block rounded-full bg-brand-dark px-6 py-2.5 text-sm font-semibold text-brand-foreground sm:text-base"
                 >
                   Buy Now
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -85,17 +107,26 @@ function Index() {
             <h2 className="min-w-0 text-center text-xl font-bold text-heading sm:text-2xl">
               Categories
             </h2>
-            <a href="#all" className="shrink-0 text-sm font-medium text-heading underline">
+            <Link
+              to="/category/$slug"
+              params={{ slug: "brands" }}
+              className="shrink-0 text-sm font-medium text-heading underline"
+            >
               View All
-            </a>
+            </Link>
           </div>
           <div className="h-px w-full bg-neutral-200" />
           <ul className="mt-8 grid grid-cols-3 gap-y-8 sm:grid-cols-4 lg:grid-cols-6">
             {categories.map((cat) => (
               <li key={cat.name} className="flex flex-col items-center gap-3 text-center">
-                <a href="#all" className="transition-transform hover:scale-105">
+                <Link
+                  to="/category/$slug"
+                  params={{ slug: cat.slug }}
+                  className="transition-transform hover:scale-105"
+                  aria-label={cat.name}
+                >
                   <Circle emoji={cat.emoji} tint={cat.tint} />
-                </a>
+                </Link>
                 <span className="px-2 text-sm text-heading">{cat.name}</span>
               </li>
             ))}
@@ -131,9 +162,12 @@ function Index() {
                     </span>
                   </div>
                   <div className="my-4 grid h-32 place-items-center text-5xl" aria-hidden>
-                    {pick.emoji}
+                    {pick.product.emoji}
                   </div>
-                  <p className="line-clamp-2 text-sm font-medium text-heading">{pick.name}</p>
+                  <p className="line-clamp-2 text-sm font-medium text-heading">
+                    {pick.product.name}
+                  </p>
+                  <p className="mt-1 text-sm font-bold text-heading">₹{pick.product.price}</p>
                 </li>
               ))}
             </ul>
@@ -150,12 +184,14 @@ function Index() {
           <ul className="mega-scroll flex gap-6 overflow-x-auto pb-3">
             {crops.map((crop) => (
               <li key={crop.name} className="flex w-28 shrink-0 flex-col items-center gap-3">
-                <a
-                  href="#all"
+                <Link
+                  to="/category/$slug"
+                  params={{ slug: crop.slug }}
+                  aria-label={crop.name}
                   className="rounded-full border border-neutral-200 p-1 transition-transform hover:scale-105"
                 >
                   <Circle emoji={crop.emoji} />
-                </a>
+                </Link>
                 <span className="text-center text-sm text-heading">{crop.name}</span>
               </li>
             ))}
@@ -172,9 +208,14 @@ function Index() {
           <ul className="mega-scroll flex gap-6 overflow-x-auto pb-3">
             {pests.map((pest) => (
               <li key={pest.name} className="flex w-32 shrink-0 flex-col items-center gap-3">
-                <a href="#all" className="transition-transform hover:scale-105">
+                <Link
+                  to="/category/$slug"
+                  params={{ slug: pest.slug }}
+                  aria-label={pest.name}
+                  className="transition-transform hover:scale-105"
+                >
                   <Circle emoji={pest.emoji} tint="bg-green-100" />
-                </a>
+                </Link>
                 <span className="text-center text-sm text-heading">{pest.name}</span>
               </li>
             ))}
@@ -187,7 +228,7 @@ function Index() {
             <SectionHeader title="Best Selling" subtitle="Best prices available today." />
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
               {bestSelling.map((p) => (
-                <ProductCard key={p.name} product={p} />
+                <ProductCard key={p.id} product={p} />
               ))}
             </div>
           </div>
@@ -197,9 +238,10 @@ function Index() {
         <section className="bg-brand/5 py-12">
           <div className="mx-auto grid max-w-[1400px] gap-6 px-6 md:grid-cols-3">
             {promoBanners.map((banner) => (
-              <a
+              <Link
                 key={banner.title}
-                href="#all"
+                to="/category/$slug"
+                params={{ slug: banner.slug }}
                 className={`relative flex min-h-[180px] items-center gap-4 overflow-hidden rounded-md bg-gradient-to-br ${banner.tone} p-6 text-brand-foreground shadow-md`}
               >
                 <span className="absolute top-2 right-2 rounded bg-black/50 px-1.5 py-0.5 text-[10px] font-bold">
@@ -209,7 +251,7 @@ function Index() {
                   {banner.emoji}
                 </span>
                 <span className="text-lg leading-snug font-bold">{banner.title}</span>
-              </a>
+              </Link>
             ))}
           </div>
         </section>
@@ -219,7 +261,7 @@ function Index() {
           <SectionHeader title="Sprayers" subtitle="Reliable Sprayers Built for Indian Farms" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {sprayers.map((p) => (
-              <ProductCard key={p.name} product={p} />
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </section>
@@ -234,7 +276,7 @@ function Index() {
             />
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
               {trending.map((p) => (
-                <ProductCard key={p.name} product={p} />
+                <ProductCard key={p.id} product={p} />
               ))}
             </div>
           </div>
