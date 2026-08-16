@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { CheckCircle2, Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useMutation } from "@tanstack/react-query";
 import { useCart } from "@/lib/cart";
+import { OrderStatusTimeline } from "@/components/order/OrderStatusTimeline";
+import { createOrder, type OrderSummary } from "@/lib/orders.functions";
 
 type Step = "cart" | "details" | "done";
 
@@ -10,7 +15,24 @@ export function CartDrawer() {
   const { lines, isOpen, closeCart, setQty, remove, subtotal, savings, count, clear } = useCart();
   const [step, setStep] = useState<Step>("cart");
   const [form, setForm] = useState({ name: "", phone: "", pincode: "", address: "" });
-  const [orderId, setOrderId] = useState("");
+  const [order, setOrder] = useState<OrderSummary | null>(null);
+  const submitOrder = useServerFn(createOrder);
+
+  const mutation = useMutation({
+    mutationFn: (payload: {
+      name: string;
+      phone: string;
+      pincode: string;
+      address: string;
+      lines: typeof lines;
+    }) => submitOrder({ data: payload }),
+    onSuccess: (result) => {
+      setOrder(result);
+      clear();
+      setStep("done");
+    },
+  });
+
 
   if (!isOpen) return null;
 
@@ -19,15 +41,18 @@ export function CartDrawer() {
 
   const close = () => {
     closeCart();
-    if (step === "done") setStep("cart");
+    if (step === "done") {
+      setStep("cart");
+      setOrder(null);
+      mutation.reset();
+    }
   };
 
   const placeOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    setOrderId(`KS${Date.now().toString().slice(-8)}`);
-    clear();
-    setStep("done");
+    mutation.mutate({ ...form, lines });
   };
+
 
   return (
     <div className="fixed inset-0 z-[60] flex justify-end" role="dialog" aria-label="Shopping cart">
@@ -54,21 +79,37 @@ export function CartDrawer() {
         </header>
 
         {step === "done" ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-            <CheckCircle2 className="h-14 w-14 text-brand" aria-hidden />
-            <h3 className="text-lg font-bold text-heading">Thank you, {form.name || "farmer"}!</h3>
-            <p className="text-sm text-muted-foreground">
-              Order <span className="font-semibold text-heading">{orderId}</span> is confirmed. We
-              will call you on {form.phone || "your number"} before dispatch.
+          <div className="mega-scroll flex-1 overflow-y-auto px-6 py-8 text-center">
+            <CheckCircle2 className="mx-auto h-14 w-14 text-brand" aria-hidden />
+            <h3 className="mt-3 text-lg font-bold text-heading">
+              Thank you, {order?.customerName || form.name || "farmer"}!
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Order <span className="font-semibold text-heading">{order?.orderNumber}</span> is
+              confirmed for ₹{order?.total}. We will call you on {form.phone || "your number"} before
+              dispatch.
             </p>
-            <button
-              type="button"
-              onClick={close}
-              className="mt-4 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground"
-            >
-              Continue shopping
-            </button>
+            <div className="mt-6 rounded-md border border-neutral-200 p-4 text-left">
+              <OrderStatusTimeline status={order?.status ?? "placed"} />
+            </div>
+            <div className="mt-6 flex flex-col gap-2">
+              <Link
+                to="/track"
+                onClick={close}
+                className="rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground"
+              >
+                Track this order
+              </Link>
+              <button
+                type="button"
+                onClick={close}
+                className="rounded-md border border-neutral-300 px-5 py-2.5 text-sm font-semibold text-heading"
+              >
+                Continue shopping
+              </button>
+            </div>
           </div>
+
         ) : lines.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
             <span className="text-5xl" aria-hidden>
@@ -197,6 +238,11 @@ export function CartDrawer() {
                 className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand"
               />
             </label>
+            {mutation.isError ? (
+              <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                We couldn't place the order. Check your details and try again.
+              </p>
+            ) : null}
             <div className="mt-auto flex gap-2 pt-4">
               <button
                 type="button"
@@ -207,11 +253,13 @@ export function CartDrawer() {
               </button>
               <button
                 type="submit"
-                className="flex-1 rounded-md bg-brand py-3 text-sm font-bold text-brand-foreground"
+                disabled={mutation.isPending}
+                className="flex-1 rounded-md bg-brand py-3 text-sm font-bold text-brand-foreground disabled:opacity-60"
               >
-                Place order
+                {mutation.isPending ? "Placing order…" : "Place order"}
               </button>
             </div>
+
           </form>
         )}
       </aside>

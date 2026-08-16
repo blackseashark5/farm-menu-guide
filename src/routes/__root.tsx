@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
-import { CartDrawer } from "../components/cart/CartDrawer";
+import { CartDrawerMount } from "../components/cart/CartDrawerMount";
 
 function NotFoundComponent() {
   return (
@@ -131,7 +131,7 @@ function RootComponent() {
       <CartProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
-        <CartDrawer />
+        <CartDrawerMount />
       </CartProvider>
     </QueryClientProvider>
   );

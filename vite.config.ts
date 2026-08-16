@@ -12,4 +12,22 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    build: {
+      // Keep vendor code in its own chunks so route chunks stay small and the
+      // build does not have to churn through one oversized module graph.
+      chunkSizeWarningLimit: 900,
+      rollupOptions: {
+        output: {
+          manualChunks: (id: string) => {
+            if (!id.includes("node_modules")) return undefined;
+            if (id.includes("lucide-react")) return "icons";
+            if (id.includes("@tanstack")) return "tanstack";
+            if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return "react";
+            return undefined;
+          },
+        },
+      },
+    },
+  },
 });
