@@ -34,9 +34,10 @@ export const topPicks: TopPick[] = (
     ["Viral Defense", "katyayani-anti-virus-organic-viricide-for-viral-disease"],
   ] as const
 )
-  .map(([tag, id]) => ({ tag, product: byId(id) }))
+  .map(([tag, id]) => ({ tag: tag as string, product: byId(id) }))
   .filter((x): x is { tag: string; product: Product } => Boolean(x.product))
   .map((x, i) => ({ rank: i + 1, tag: x.tag, product: x.product }));
+
 
 
 export const crops = [
