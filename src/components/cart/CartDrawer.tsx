@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { CheckCircle2, Minus, Plus, ShoppingCart, Trash2, X } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useMutation } from "@tanstack/react-query";
 import { useCart } from "@/lib/cart";
+import { OrderStatusTimeline } from "@/components/order/OrderStatusTimeline";
+import { createOrder, type OrderSummary } from "@/lib/orders.functions";
 
 type Step = "cart" | "details" | "done";
 
@@ -10,7 +15,23 @@ export function CartDrawer() {
   const { lines, isOpen, closeCart, setQty, remove, subtotal, savings, count, clear } = useCart();
   const [step, setStep] = useState<Step>("cart");
   const [form, setForm] = useState({ name: "", phone: "", pincode: "", address: "" });
-  const [orderId, setOrderId] = useState("");
+  const [order, setOrder] = useState<OrderSummary | null>(null);
+  const submitOrder = useServerFn(createOrder);
+
+  const mutation = useMutation({
+    mutationFn: (payload: Parameters<typeof createOrder>[0] extends never ? never : {
+      name: string;
+      phone: string;
+      pincode: string;
+      address: string;
+      lines: typeof lines;
+    }) => submitOrder({ data: payload }),
+    onSuccess: (result) => {
+      setOrder(result);
+      clear();
+      setStep("done");
+    },
+  });
 
   if (!isOpen) return null;
 
@@ -19,15 +40,18 @@ export function CartDrawer() {
 
   const close = () => {
     closeCart();
-    if (step === "done") setStep("cart");
+    if (step === "done") {
+      setStep("cart");
+      setOrder(null);
+      mutation.reset();
+    }
   };
 
   const placeOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    setOrderId(`KS${Date.now().toString().slice(-8)}`);
-    clear();
-    setStep("done");
+    mutation.mutate({ ...form, lines });
   };
+
 
   return (
     <div className="fixed inset-0 z-[60] flex justify-end" role="dialog" aria-label="Shopping cart">
