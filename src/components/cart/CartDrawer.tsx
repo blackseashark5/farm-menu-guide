@@ -19,7 +19,7 @@ export function CartDrawer() {
   const submitOrder = useServerFn(createOrder);
 
   const mutation = useMutation({
-    mutationFn: (payload: Parameters<typeof createOrder>[0] extends never ? never : {
+    mutationFn: (payload: {
       name: string;
       phone: string;
       pincode: string;
@@ -32,6 +32,7 @@ export function CartDrawer() {
       setStep("done");
     },
   });
+
 
   if (!isOpen) return null;
 
