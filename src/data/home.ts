@@ -2,7 +2,7 @@ import { products, type Product } from "./catalog";
 
 export type { Product };
 
-const byId = (id: string) => products.find((p) => p.id === id)!;
+const byId = (id: string) => products.find((p) => p.id === id);
 
 export type Category = { name: string; emoji: string; tint: string; slug: string };
 
@@ -24,13 +24,13 @@ export const categories: Category[] = [
 export type TopPick = { rank: number; tag: string; product: Product };
 
 export const topPicks: TopPick[] = [
-  { rank: 1, tag: "More Branching", product: byId("tapas-vitainject-plant-growth-regulator-fruit-and-flower") },
+  { rank: 1, tag: "More Branching", product: byId("tapas-vitainject-plant-growth-regulator-fruit-and-flowering") },
   { rank: 2, tag: "Stronger Roots", product: byId("tapas-humiq-humic-acid-fulvic-acid-and-potassium-100") },
   { rank: 3, tag: "Pest Control", product: byId("coragen-insecticide-chlorantraniliprole-18-5-sc") },
   { rank: 4, tag: "Growth Booster", product: byId("biovita-liquid-biofertilizer-seaweed-extract") },
   { rank: 5, tag: "High Yield", product: byId("yashaswaini-hybrid-chilli-seeds-for-high-yield") },
   { rank: 6, tag: "Weed Control", product: byId("sumitomo-glycel-herbicide-glyphosate-41-sl-ipa-salt") },
-  { rank: 7, tag: "Viral Defense", product: byId("katyayani-anti-virus-organic-viricide-for-viral-disea") },
+  { rank: 7, tag: "Viral Defense", product: byId("katyayani-anti-virus-organic-viricide-for-viral-disease") },
 ];
 
 export const crops = [
@@ -54,10 +54,10 @@ export const pests = [
   { name: "Weeds & grasses", emoji: "🌾", slug: "herbicides" },
 ];
 
-const pick = (...ids: string[]) => ids.map(byId);
+const pick = (...ids: string[]) => ids.map(byId).filter((p): p is Product => Boolean(p));
 
 export const bestSelling: Product[] = pick(
-  "tapas-vitainject-plant-growth-regulator-fruit-and-flower",
+  "tapas-vitainject-plant-growth-regulator-fruit-and-flowering",
   "tapas-humiq-humic-acid-fulvic-acid-and-potassium-100",
   "tapas-vam-sp-highly-concentrated-biofertilizer",
   "saaho-to-3251-tomato-seeds-high-yield-hybrid",
@@ -65,15 +65,15 @@ export const bestSelling: Product[] = pick(
 );
 
 export const trending: Product[] = pick(
-  "janatha-amino-pro-marine-based-amino-acid-growth-prom",
+  "janatha-amino-pro-marine-based-amino-acid-growth-promoter",
   "coragen-insecticide-chlorantraniliprole-18-5-sc",
   "biovita-liquid-biofertilizer-seaweed-extract",
   "bayer-roundup-herbicide-glyphosate-41-sl",
   "solomon-insecticide-by-bayer-beta-cyfluthrin-8-49",
-  "katyayani-anti-virus-organic-viricide-for-viral-disea",
+  "katyayani-anti-virus-organic-viricide-for-viral-disease",
   "sumitomo-glycel-herbicide-glyphosate-41-sl-ipa-salt",
   "amruth-neemodi-1500-ppm-neem-oil-bio-insecticide",
-  "syngenta-amistar-top-fungicide-azoxystrobin-difenocon",
+  "syngenta-amistar-top-fungicide-azoxystrobin-difenoconazole",
   "upl-saaf-fungicide-carbendazim-mancozeb",
 );
 
