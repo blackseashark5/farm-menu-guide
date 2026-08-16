@@ -79,21 +79,37 @@ export function CartDrawer() {
         </header>
 
         {step === "done" ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-            <CheckCircle2 className="h-14 w-14 text-brand" aria-hidden />
-            <h3 className="text-lg font-bold text-heading">Thank you, {form.name || "farmer"}!</h3>
-            <p className="text-sm text-muted-foreground">
-              Order <span className="font-semibold text-heading">{orderId}</span> is confirmed. We
-              will call you on {form.phone || "your number"} before dispatch.
+          <div className="mega-scroll flex-1 overflow-y-auto px-6 py-8 text-center">
+            <CheckCircle2 className="mx-auto h-14 w-14 text-brand" aria-hidden />
+            <h3 className="mt-3 text-lg font-bold text-heading">
+              Thank you, {order?.customerName || form.name || "farmer"}!
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Order <span className="font-semibold text-heading">{order?.orderNumber}</span> is
+              confirmed for ₹{order?.total}. We will call you on {form.phone || "your number"} before
+              dispatch.
             </p>
-            <button
-              type="button"
-              onClick={close}
-              className="mt-4 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground"
-            >
-              Continue shopping
-            </button>
+            <div className="mt-6 rounded-md border border-neutral-200 p-4 text-left">
+              <OrderStatusTimeline status={order?.status ?? "placed"} />
+            </div>
+            <div className="mt-6 flex flex-col gap-2">
+              <Link
+                to="/track"
+                onClick={close}
+                className="rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground"
+              >
+                Track this order
+              </Link>
+              <button
+                type="button"
+                onClick={close}
+                className="rounded-md border border-neutral-300 px-5 py-2.5 text-sm font-semibold text-heading"
+              >
+                Continue shopping
+              </button>
+            </div>
           </div>
+
         ) : lines.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
             <span className="text-5xl" aria-hidden>
