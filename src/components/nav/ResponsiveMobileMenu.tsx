@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { navEntries } from "@/data/megaMenu";
 import { SearchBar } from "./SearchBar";
@@ -6,6 +6,15 @@ import { SearchBar } from "./SearchBar";
 export function ResponsiveMobileMenu() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <div className="lg:hidden">
@@ -61,6 +70,7 @@ export function ResponsiveMobileMenu() {
                       <button
                         type="button"
                         aria-expanded={isExpanded}
+                        aria-controls={`m-acc-${entry.label.replace(/\W+/g, "-")}`}
                         onClick={() => setExpanded(isExpanded ? null : entry.label)}
                         className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-heading"
                       >
@@ -70,7 +80,10 @@ export function ResponsiveMobileMenu() {
                         />
                       </button>
                       {isExpanded ? (
-                        <div className="animate-mega-in space-y-4 bg-neutral-50 px-4 py-3">
+                        <div
+                          id={`m-acc-${entry.label.replace(/\W+/g, "-")}`}
+                          className="animate-mega-in space-y-4 bg-neutral-50 px-4 py-3"
+                        >
                           {entry.sections.map((section) => (
                             <div key={section.title}>
                               <h3 className="mb-2 text-xs font-bold tracking-wide text-brand-dark uppercase">
