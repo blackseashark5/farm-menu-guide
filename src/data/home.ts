@@ -23,15 +23,21 @@ export const categories: Category[] = [
 
 export type TopPick = { rank: number; tag: string; product: Product };
 
-export const topPicks: TopPick[] = [
-  { rank: 1, tag: "More Branching", product: byId("tapas-vitainject-plant-growth-regulator-fruit-and-flowering") },
-  { rank: 2, tag: "Stronger Roots", product: byId("tapas-humiq-humic-acid-fulvic-acid-and-potassium-100") },
-  { rank: 3, tag: "Pest Control", product: byId("coragen-insecticide-chlorantraniliprole-18-5-sc") },
-  { rank: 4, tag: "Growth Booster", product: byId("biovita-liquid-biofertilizer-seaweed-extract") },
-  { rank: 5, tag: "High Yield", product: byId("yashaswaini-hybrid-chilli-seeds-for-high-yield") },
-  { rank: 6, tag: "Weed Control", product: byId("sumitomo-glycel-herbicide-glyphosate-41-sl-ipa-salt") },
-  { rank: 7, tag: "Viral Defense", product: byId("katyayani-anti-virus-organic-viricide-for-viral-disease") },
-];
+export const topPicks: TopPick[] = (
+  [
+    ["More Branching", "tapas-vitainject-plant-growth-regulator-fruit-and-flowering"],
+    ["Stronger Roots", "tapas-humiq-humic-acid-fulvic-acid-and-potassium-100"],
+    ["Pest Control", "coragen-insecticide-chlorantraniliprole-18-5-sc"],
+    ["Growth Booster", "biovita-liquid-biofertilizer-seaweed-extract"],
+    ["High Yield", "yashaswaini-hybrid-chilli-seeds-for-high-yield"],
+    ["Weed Control", "sumitomo-glycel-herbicide-glyphosate-41-sl-ipa-salt"],
+    ["Viral Defense", "katyayani-anti-virus-organic-viricide-for-viral-disease"],
+  ] as const
+)
+  .map(([tag, id]) => ({ tag, product: byId(id) }))
+  .filter((x): x is { tag: string; product: Product } => Boolean(x.product))
+  .map((x, i) => ({ rank: i + 1, tag: x.tag, product: x.product }));
+
 
 export const crops = [
   { name: "Green Chilli", emoji: "🌶️", slug: "chilli" },
