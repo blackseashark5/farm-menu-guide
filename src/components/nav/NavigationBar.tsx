@@ -53,9 +53,11 @@ export function NavigationBar() {
   const focusPanel = (position: "first" | "last") => {
     // Wait for the lazily-loaded panel to paint before moving focus into it.
     requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
       const links = panelLinks();
       const target = position === "first" ? links[0] : links[links.length - 1];
       target?.focus();
+      });
     });
   };
 
