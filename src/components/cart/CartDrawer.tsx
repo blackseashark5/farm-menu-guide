@@ -238,6 +238,11 @@ export function CartDrawer() {
                 className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand"
               />
             </label>
+            {mutation.isError ? (
+              <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                We couldn't place the order. Check your details and try again.
+              </p>
+            ) : null}
             <div className="mt-auto flex gap-2 pt-4">
               <button
                 type="button"
@@ -248,11 +253,13 @@ export function CartDrawer() {
               </button>
               <button
                 type="submit"
-                className="flex-1 rounded-md bg-brand py-3 text-sm font-bold text-brand-foreground"
+                disabled={mutation.isPending}
+                className="flex-1 rounded-md bg-brand py-3 text-sm font-bold text-brand-foreground disabled:opacity-60"
               >
-                Place order
+                {mutation.isPending ? "Placing order…" : "Place order"}
               </button>
             </div>
+
           </form>
         )}
       </aside>
