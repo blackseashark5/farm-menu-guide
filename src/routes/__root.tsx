@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "../lib/cart";
+import { WishlistProvider } from "../lib/wishlist";
+import { Toaster } from "../components/ui/sonner";
 import { CartDrawerMount } from "../components/cart/CartDrawerMount";
 
 function NotFoundComponent() {
@@ -128,11 +130,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <CartDrawerMount />
-      </CartProvider>
+      <WishlistProvider>
+        <CartProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <CartDrawerMount />
+          <Toaster position="top-center" />
+        </CartProvider>
+      </WishlistProvider>
     </QueryClientProvider>
   );
 }

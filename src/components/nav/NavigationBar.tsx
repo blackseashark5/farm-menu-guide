@@ -146,8 +146,8 @@ export function NavigationBar() {
         if (!containerRef.current?.contains(e.relatedTarget as Node)) setOpenLabel(null);
       }}
     >
-      <nav aria-label="Primary" className="mx-auto max-w-[1400px] px-6">
-        <ul role="menubar" className="flex items-stretch justify-center gap-1">
+      <nav aria-label="Primary" className="mega-scroll mx-auto max-w-[1400px] overflow-x-auto px-6">
+        <ul role="menubar" className="flex items-stretch justify-center gap-1 min-w-max">
           {navEntries.map((entry, index) => {
             const isOpen = openLabel === entry.label && !!entry.sections;
             return (
