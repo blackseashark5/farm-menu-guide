@@ -1,12 +1,30 @@
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ChevronDown, Globe, Heart, ShoppingCart, Truck, User } from "lucide-react";
+import { toast } from "sonner";
 import { SearchBar } from "./SearchBar";
 import { NavigationBar } from "./NavigationBar";
 import { ResponsiveMobileMenu } from "./ResponsiveMobileMenu";
 import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
+
+const LANGUAGES = ["English", "हिंदी", "मराठी", "తెలుగు", "ಕನ್ನಡ"] as const;
 
 export function Header() {
   const { count, openCart } = useCart();
+  const { count: wishCount } = useWishlist();
+  const [lang, setLang] = useState<string>(LANGUAGES[0]);
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      if (!langRef.current?.contains(e.target as Node)) setLangOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, []);
+
 
   return (
     <header className="sticky top-0 z-50 bg-white">
