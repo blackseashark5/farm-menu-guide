@@ -13,9 +13,14 @@ const LANGUAGES = ["English", "हिंदी", "मराठी", "తెల�
 export function Header() {
   const { count, openCart } = useCart();
   const { count: wishCount } = useWishlist();
-  const [lang, setLang] = useState<string>(LANGUAGES[0]);
+  const [lang, setLang] = useState<string>(LANGUAGES[0]!);
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("ks-lang");
+    if (saved && LANGUAGES.includes(saved)) setLang(saved);
+  }, []);
 
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
@@ -104,6 +109,7 @@ export function Header() {
                         aria-selected={lang === l}
                         onClick={() => {
                           setLang(l);
+                          localStorage.setItem("ks-lang", l);
                           setLangOpen(false);
                           toast.success(`Language set to ${l}`);
                         }}
