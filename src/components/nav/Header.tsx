@@ -75,35 +75,76 @@ export function Header() {
           </div>
 
           <div className="flex shrink-0 items-center gap-4 text-brand-foreground lg:text-heading">
-            <button
-              type="button"
-              className="hidden items-center gap-2 rounded-md border border-brand/40 px-2.5 py-1.5 text-sm font-medium lg:flex"
-            >
-              <Globe className="h-4 w-4 text-brand" aria-hidden />
-              English
-              <ChevronDown className="h-3.5 w-3.5" aria-hidden />
-            </button>
-            <Link
-              to="/search"
-              search={{ q: "sprayer" }}
-              className="hidden items-center gap-2 text-sm xl:flex"
-            >
+            <div ref={langRef} className="relative hidden lg:block">
+              <button
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={langOpen}
+                onClick={() => setLangOpen((v) => !v)}
+                className="flex items-center gap-2 rounded-md border border-brand/40 px-2.5 py-1.5 text-sm font-medium"
+              >
+                <Globe className="h-4 w-4 text-brand" aria-hidden />
+                {lang}
+                <ChevronDown
+                  className={`h-3.5 w-3.5 transition-transform ${langOpen ? "rotate-180" : ""}`}
+                  aria-hidden
+                />
+              </button>
+              {langOpen ? (
+                <ul
+                  role="listbox"
+                  aria-label="Select language"
+                  className="animate-mega-in absolute right-0 z-50 mt-1 w-36 overflow-hidden rounded-md border border-neutral-200 bg-white py-1 shadow-lg"
+                >
+                  {LANGUAGES.map((l) => (
+                    <li key={l}>
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={lang === l}
+                        onClick={() => {
+                          setLang(l);
+                          setLangOpen(false);
+                          toast.success(`Language set to ${l}`);
+                        }}
+                        className={`block w-full px-3 py-2 text-left text-sm hover:bg-neutral-100 ${
+                          lang === l ? "font-semibold text-brand-dark" : "text-heading"
+                        }`}
+                      >
+                        {l}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+            <Link to="/track" className="hidden items-center gap-2 text-sm xl:flex">
               <Truck className="h-5 w-5" aria-hidden /> Track Order
             </Link>
             <Link
-              to="/category/$slug"
-              params={{ slug: "offers" }}
-              className="hidden items-center gap-2 text-sm md:flex"
+              to="/wishlist"
+              aria-label={`Wishlist, ${wishCount} items`}
+              className="relative hidden items-center gap-2 text-sm md:flex"
             >
               <Heart className="h-5 w-5" aria-hidden /> Wishlist
+              {wishCount > 0 ? (
+                <span className="absolute -top-2 -left-2 grid h-5 min-w-5 place-items-center rounded-full bg-saffron px-1 text-[11px] font-bold text-saffron-foreground">
+                  {wishCount}
+                </span>
+              ) : null}
             </Link>
-            <Link
-              to="/category/$slug"
-              params={{ slug: "brands" }}
+            <button
+              type="button"
+              onClick={() =>
+                toast("Login coming soon", {
+                  description: "You can order right away with cash on delivery — no account needed.",
+                })
+              }
               className="hidden items-center gap-2 text-sm sm:flex"
             >
               <User className="h-5 w-5" aria-hidden /> Login
-            </Link>
+            </button>
+
             <button
               type="button"
               onClick={openCart}
