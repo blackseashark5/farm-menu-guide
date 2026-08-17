@@ -19,7 +19,7 @@ export function Header() {
 
   useEffect(() => {
     const saved = localStorage.getItem("ks-lang");
-    if (saved && LANGUAGES.includes(saved)) setLang(saved);
+    if (saved && (LANGUAGES as readonly string[]).includes(saved)) setLang(saved);
   }, []);
 
   useEffect(() => {
