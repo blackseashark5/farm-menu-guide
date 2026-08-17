@@ -1,9 +1,13 @@
 import { Heart, Star } from "lucide-react";
+import { toast } from "sonner";
 import type { Product } from "@/data/catalog";
 import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
+  const { has, toggle } = useWishlist();
+  const saved = has(product.id);
   const off = Math.round(((product.mrp - product.price) / product.mrp) * 100);
   return (
     <article className="relative flex flex-col overflow-hidden rounded-md border border-neutral-200 bg-white transition-shadow hover:shadow-lg">
@@ -12,11 +16,21 @@ export function ProductCard({ product }: { product: Product }) {
       </span>
       <button
         type="button"
-        aria-label={`Add ${product.name} to wishlist`}
-        className="absolute top-2 right-2 z-10 grid h-8 w-8 place-items-center rounded-full text-neutral-400 hover:text-destructive"
+        aria-pressed={saved}
+        aria-label={saved ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+        onClick={() => {
+          const added = toggle(product);
+          toast[added ? "success" : "message"](
+            added ? "Saved to wishlist" : "Removed from wishlist",
+          );
+        }}
+        className={`absolute top-2 right-2 z-10 grid h-8 w-8 place-items-center rounded-full transition-colors ${
+          saved ? "text-destructive" : "text-neutral-400 hover:text-destructive"
+        }`}
       >
-        <Heart className="h-4 w-4" />
+        <Heart className={`h-4 w-4 ${saved ? "fill-current" : ""}`} />
       </button>
+
       <div className="relative grid h-40 place-items-center bg-neutral-50 text-5xl">
         <span aria-hidden>{product.emoji}</span>
         <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-brand-dark px-1.5 py-0.5 text-[11px] font-semibold text-brand-foreground">
