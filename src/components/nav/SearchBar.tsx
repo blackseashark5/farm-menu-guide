@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Mic, Search } from "lucide-react";
+import { toast } from "sonner";
 import { searchCatalog } from "@/data/catalog";
 
 export function SearchBar({ className = "" }: { className?: string }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [listening, setListening] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -19,6 +21,34 @@ export function SearchBar({ className = "" }: { className?: string }) {
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
   }, []);
+
+  const startVoiceSearch = () => {
+    const Recognition =
+      (window as unknown as { SpeechRecognition?: any; webkitSpeechRecognition?: any })
+        .SpeechRecognition ??
+      (window as unknown as { webkitSpeechRecognition?: any }).webkitSpeechRecognition;
+    if (!Recognition) {
+      toast("Voice search isn't supported in this browser", {
+        description: "Type your product name instead.",
+      });
+      return;
+    }
+    const recognition = new Recognition();
+    recognition.lang = "en-IN";
+    recognition.interimResults = false;
+    setListening(true);
+    recognition.onresult = (event: any) => {
+      const spoken = String(event.results?.[0]?.[0]?.transcript ?? "").trim();
+      if (spoken) {
+        setQuery(spoken);
+        setOpen(true);
+        navigate({ to: "/search", search: { q: spoken } });
+      }
+    };
+    recognition.onerror = () => toast("Couldn't hear that. Please try again.");
+    recognition.onend = () => setListening(false);
+    recognition.start();
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,8 +80,10 @@ export function SearchBar({ className = "" }: { className?: string }) {
         />
         <button
           type="button"
-          aria-label="Search by voice"
-          className="grid h-10 w-11 shrink-0 place-items-center bg-saffron text-saffron-foreground transition-opacity hover:opacity-90"
+          aria-label={listening ? "Listening, stop voice search" : "Search by voice"}
+          aria-pressed={listening}
+          onClick={startVoiceSearch}
+          className={`grid h-10 w-11 shrink-0 place-items-center bg-saffron text-saffron-foreground transition-opacity hover:opacity-90 ${listening ? "animate-pulse" : ""}`}
         >
           <Mic className="h-4 w-4" aria-hidden />
         </button>
