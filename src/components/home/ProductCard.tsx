@@ -58,11 +58,15 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
         <button
           type="button"
-          onClick={() => add(product)}
+          onClick={() => {
+            add(product);
+            toast.success(`${product.name} added to cart`);
+          }}
           className="mt-3 w-full rounded-md bg-brand py-2 text-sm font-semibold text-brand-foreground transition-opacity hover:opacity-90"
         >
           Add to Cart
         </button>
+
       </div>
     </article>
   );
