@@ -32,19 +32,25 @@ export function ProductCard({ product }: { product: Product }) {
         <Heart className={`h-4 w-4 ${saved ? "fill-current" : ""}`} />
       </button>
 
-      <div className="relative grid h-40 place-items-center bg-neutral-50 text-5xl">
+      <Link
+        to="/product/$id"
+        params={{ id: product.id }}
+        className="relative grid h-40 place-items-center bg-neutral-50 text-5xl"
+      >
         <span aria-hidden>{product.emoji}</span>
         <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded bg-brand-dark px-1.5 py-0.5 text-[11px] font-semibold text-brand-foreground">
           {product.rating} <Star className="h-3 w-3 fill-current" aria-hidden /> | {product.reviews}
         </span>
-      </div>
+      </Link>
       {product.badge ? (
         <p className="bg-destructive px-2 py-1 text-[11px] font-semibold text-destructive-foreground">
           {product.badge} ✨
         </p>
       ) : null}
       <div className="flex flex-1 flex-col gap-1 p-3">
-        <h3 className="line-clamp-2 text-sm font-medium text-heading">{product.name}</h3>
+        <Link to="/product/$id" params={{ id: product.id }} className="hover:text-brand-dark">
+          <h3 className="line-clamp-2 text-sm font-medium text-heading">{product.name}</h3>
+        </Link>
         <p className="text-xs text-muted-foreground uppercase">{product.brand}</p>
         <div className="mt-1 flex items-baseline gap-2">
           <span className="text-base font-bold text-heading">₹{product.price}</span>
