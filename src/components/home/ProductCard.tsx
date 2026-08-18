@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Heart, Star } from "lucide-react";
 import { toast } from "sonner";
 import type { Product } from "@/data/catalog";
