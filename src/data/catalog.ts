@@ -123,6 +123,8 @@ export const products: Product[] = [
 
 export const brands = Array.from(new Set(products.map((x) => x.brand))).sort();
 
+export const getProduct = (id: string) => products.find((x) => x.id === id);
+
 /** Category registry built from the navigation tree, so every menu link resolves. */
 export type CategoryDef = { slug: string; name: string; parent?: string | undefined; description: string };
 
