@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { categories } from "@/data/catalog";
+import { categories, products } from "@/data/catalog";
 
 const SITE = "https://farm-menu-guide.lovable.app";
 
