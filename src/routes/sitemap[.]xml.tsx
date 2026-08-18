@@ -15,6 +15,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             loc: `${SITE}/category/${c.slug}`,
             priority: c.parent ? "0.6" : "0.8",
           })),
+          ...products.map((p) => ({ loc: `${SITE}/product/${p.id}`, priority: "0.7" })),
         ];
 
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
